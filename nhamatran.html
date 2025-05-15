@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Nhân hai ma trận chữ nhật</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    input[type="number"] {
+      width: 50px;
+      text-align: center;
+    }
+    table {
+      margin-bottom: 20px;
+    }
+    td {
+      padding: 2px;
+    }
+    .matrix {
+      display: inline-block;
+      margin-right: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Phần mềm nhân hai ma trận</h2>
+
+  <div>
+    <label>Số dòng ma trận A: <input type="number" id="rowsA" min="1" value="2"></label>
+    <label>Số cột ma trận A: <input type="number" id="colsA" min="1" value="2"></label><br>
+    <label>Số dòng ma trận B: <input type="number" id="rowsB" min="1" value="2"></label>
+    <label>Số cột ma trận B: <input type="number" id="colsB" min="1" value="2"></label>
+    <button onclick="createMatrixInputs()">Tạo ma trận</button>
+  </div>
+
+  <div id="matrixInputs" style="margin-top: 20px;"></div>
+  <button onclick="multiplyMatrices()">Nhân ma trận</button>
+
+  <h3>Kết quả:</h3>
+  <div id="result"></div>
+
+  <script>
+    function createMatrixInputs() {
+      const rowsA = +document.getElementById('rowsA').value;
+      const colsA = +document.getElementById('colsA').value;
+      const rowsB = +document.getElementById('rowsB').value;
+      const colsB = +document.getElementById('colsB').value;
+
+      const container = document.getElementById('matrixInputs');
+      container.innerHTML = '';
+
+      if (colsA !== rowsB) {
+        container.innerHTML = '<p style="color:red;">Không thể nhân ma trận: số cột A phải bằng số dòng B.</p>';
+        return;
+      }
+
+      container.appendChild(createMatrix('A', rowsA, colsA));
+      container.appendChild(createMatrix('B', rowsB, colsB));
+    }
+
+    function createMatrix(id, rows, cols) {
+      const div = document.createElement('div');
+      div.className = 'matrix';
+      div.innerHTML = `<p>Ma trận ${id} (${rows} × ${cols})</p>`;
+
+      const table = document.createElement('table');
+      for (let i = 0; i < rows; i++) {
+        const row = table.insertRow();
+        for (let j = 0; j < cols; j++) {
+          const cell = row.insertCell();
+          const input = document.createElement('input');
+          input.type = 'number';
+          input.id = `${id}_${i}_${j}`;
+          input.value = 0;
+          cell.appendChild(input);
+        }
+      }
+      div.appendChild(table);
+      return div;
+    }
+
+    function getMatrix(id, rows, cols) {
+      const matrix = [];
+      for (let i = 0; i < rows; i++) {
+        const row = [];
+        for (let j = 0; j < cols; j++) {
+          const val = parseFloat(document.getElementById(`${id}_${i}_${j}`).value);
+          row.push(isNaN(val) ? 0 : val);
+        }
+        matrix.push(row);
+      }
+      return matrix;
+    }
+
+    function multiplyMatrices() {
+      const rowsA = +document.getElementById('rowsA').value;
+      const colsA = +document.getElementById('colsA').value;
+      const rowsB = +document.getElementById('rowsB').value;
+      const colsB = +document.getElementById('colsB').value;
+
+      if (colsA !== rowsB) {
+        document.getElementById('result').innerHTML = '<p style="color:red;">Không thể nhân ma trận!</p>';
+        return;
+      }
+
+      const A = getMatrix('A', rowsA, colsA);
+      const B = getMatrix('B', rowsB, colsB);
+
+      const result = [];
+      for (let i = 0; i < rowsA; i++) {
+        result[i] = [];
+        for (let j = 0; j < colsB; j++) {
+          let sum = 0;
+          for (let k = 0; k < colsA; k++) {
+            sum += A[i][k] * B[k][j];
+          }
+          result[i][j] = sum;
+        }
+      }
+
+      // Hiển thị kết quả
+      const output = document.getElementById('result');
+      output.innerHTML = '<p>Ma trận kết quả:</p>';
+      const table = document.createElement('table');
+      for (let i = 0; i < result.length; i++) {
+        const row = table.insertRow();
+        for (let j = 0; j < result[i].length; j++) {
+          const cell = row.insertCell();
+          cell.textContent = result[i][j];
+        }
+      }
+      output.appendChild(table);
+    }
+  </script>
+</body>
+</html>
